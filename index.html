@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube風 - 動画ストリーミング</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FF0000' width='100' height='100' rx='20'/><polygon fill='white' points='40,25 40,75 75,50'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <button class="menu-btn" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <a href="#" class="logo">
+      <span class="logo-icon-wrap">
+        <svg class="logo-icon" viewBox="0 0 90 20">
+          <path fill="#FF0000" d="M27.9727 3.12324C27.6435 2.0833 26.6768 1.5 25.6092 1.5L16.8608 1.50326L7.64573 17.2694L13.7439 17.2676L22.4044 5.73543L26.9905 17.2676L33.0761 17.2694L27.9727 3.12324Z"/>
+          <path fill="#282828" d="M19.063 8.27136L22.549 14.7557L14.3142 14.7575L19.063 8.27136Z"/>
+          <path fill="#FF0000" d="M44.0987 14.7154H49.2752V11.2871C49.2752 9.35944 50.3333 8.04258 52.1152 8.04258C53.8972 8.04258 54.9563 9.35944 54.9563 11.2871V14.7154H60.1328V10.6879C60.1328 6.34688 57.7365 4.21564 54.3137 4.21564C51.5645 4.21564 49.2752 5.91153 49.2752 5.91153V4.24219H44.0987V14.7154Z"/>
+          <path fill="#FF0000" d="M69.5977 14.7154H74.7742V4.24219H69.5977V14.7154ZM72.1859 1.31812C73.7449 1.31812 75 2.57322 75 4.13226C75 5.69131 73.7449 6.94641 72.1859 6.94641C70.6268 6.94641 69.3717 5.69131 69.3717 4.13226C69.3717 2.57322 70.6268 1.31812 72.1859 1.31812Z"/>
+          <path fill="#FF0000" d="M78.2376 14.7154H83.4141V9.53491C83.4141 8.27136 84.3012 7.38428 85.5648 7.38428C86.8283 7.38428 87.7154 8.27136 87.7154 9.53491V14.7154H92.8919V8.27136C92.8919 5.49495 90.6685 4.21564 88.178 4.21564C86.0887 4.21564 84.3012 5.31641 83.4141 6.93057V4.24219H78.2376V14.7154Z"/>
+        </svg>
+      </span>
+    </a>
+    <div class="search-bar">
+      <input type="search" placeholder="検索" aria-label="検索">
+      <button class="search-btn" aria-label="検索">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </button>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" aria-label="アップロード">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      </button>
+      <button class="avatar-btn" aria-label="アカウント">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1" alt="アバター">
+      </button>
+    </div>
+  </header>
+
+  <!-- サイドバー -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>ホーム</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-5.08l-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.5.07 1.46.93 2.75 2.22 3.43l4.94 2.58c1.5.78 3.31.78 4.81 0l5.18-2.7c1.56-.81 2.53-2.49 2.53-4.31 0-1.81-.97-3.5-2.53-4.31zm-.23 5.25l-5.18 2.7c-1.5.78-3.31.78-4.81 0L4.8 11.45c-.69-.36-1.16-1-1.22-1.73-.06-.73.27-1.44.83-1.96l1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44 1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44 1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44z"/></svg>
+        <span>ショート</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L4 14h3.5l-1.25 4h1.11l1.12-3.43h4.28L13 18h1.1l1.25-4h3.5l-2.5-3zm-3.98 2.18L14.5 11h-2.96l1.26 2.18zM3 20h18v-2H3v2z"/></svg>
+        <span>登録チャンネル</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+        <span>ライブラリ</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span>履歴</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>
+        <span>マイ動画</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span>後で見る</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+    <div class="video-grid" id="videoGrid">
+      <!-- 動画カードはJavaScriptで生成 -->
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
