@@ -1,0 +1,9 @@
+{
+  "name": "youtube-clone",
+  "version": "1.0.0",
+  "description": "YouTube風の動画ストリーミングサイト",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "start": "npx serve . -p 3000"
+  }
+}
