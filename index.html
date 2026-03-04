@@ -8,6 +8,299 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>TubeView - 動画を楽しもう</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yt-bg: #0f0f0f;
+      --yt-bg-secondary: #212121;
+      --yt-bg-tertiary: #3f3f3f;
+      --yt-text-primary: #f1f1f1;
+      --yt-text-secondary: #aaaaaa;
+      --yt-red: #ff0000;
+      --yt-hover: #272727;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: var(--yt-bg);
+      color: var(--yt-text-primary);
+      margin: 0;
+      min-height: 100vh;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px 16px;
+      padding: 24px;
+    }
+    .video-card {
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .video-card:hover {
+      transform: scale(1.02);
+    }
+    .thumbnail-wrapper {
+      position: relative;
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--yt-bg-secondary);
+    }
+    .thumbnail-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .duration-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.85);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .sidebar {
+      width: 240px;
+      position: fixed;
+      left: 0;
+      top: 56px;
+      bottom: 0;
+      background: var(--yt-bg);
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 10px 24px;
+      cursor: pointer;
+      border-radius: 0 24px 24px 0;
+      transition: background 0.15s;
+    }
+    .sidebar-item:hover {
+      background: var(--yt-hover);
+    }
+    .sidebar-item.active {
+      background: var(--yt-hover);
+    }
+    .main-content {
+      margin-left: 240px;
+      margin-top: 56px;
+      min-height: calc(100vh - 56px);
+    }
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--yt-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .search-bar {
+      flex: 1;
+      max-width: 640px;
+      display: flex;
+      margin: 0 auto;
+    }
+    .search-bar input {
+      flex: 1;
+      background: var(--yt-bg-secondary);
+      border: 1px solid var(--yt-bg-tertiary);
+      padding: 10px 16px;
+      border-radius: 40px 0 0 40px;
+      color: var(--yt-text-primary);
+      font-size: 16px;
+      outline: none;
+    }
+    .search-bar input:focus {
+      border-color: #1c62b9;
+    }
+    .search-bar input::placeholder {
+      color: var(--yt-text-secondary);
+    }
+    .search-btn {
+      background: var(--yt-bg-tertiary);
+      border: 1px solid var(--yt-bg-tertiary);
+      border-left: none;
+      padding: 10px 20px;
+      border-radius: 0 40px 40px 0;
+      cursor: pointer;
+      color: var(--yt-text-primary);
+    }
+    .search-btn:hover {
+      background: #4f4f4f;
+    }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--yt-text-primary);
+      transition: background 0.15s;
+    }
+    .icon-btn:hover {
+      background: var(--yt-hover);
+    }
+    .channel-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .video-info {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .video-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .video-title {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .video-meta {
+      font-size: 12px;
+      color: var(--yt-text-secondary);
+      margin-top: 4px;
+    }
+    @media (max-width: 1280px) {
+      .video-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .video-grid { grid-template-columns: 1fr; padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <button class="icon-btn" aria-label="メニュー">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <a href="/" class="flex items-center gap-1" style="text-decoration: none; color: inherit;">
+      <svg width="32" height="32" viewBox="0 0 90 20" fill="currentColor"><path d="M27.9727 3.12324C27.6435 2.0833 26.6768 1.37378 25.6102 1.37378H24.9722V20H27.3808V13.8874H27.7757C28.6768 13.8874 29.5803 13.6501 30.2382 13.1687C31.5312 12.2118 31.5312 10.6582 31.5312 9.59367C31.5312 7.63921 29.9453 5.47235 27.9727 3.12324Z"/><path d="M23.6348 5.3485H21.0272V20H23.6348V5.3485Z"/><path d="M17.8537 20V5.3485H15.2461V17.0486C15.2461 18.7553 16.0283 20 17.8537 20Z"/><path d="M15.2461 2.85272C15.2461 1.27483 16.0283 0 17.1104 0C18.1924 0 18.9746 1.27483 18.9746 2.85272C18.9746 4.43062 18.1924 5.70544 17.1104 5.70544C16.0283 5.70544 15.2461 4.43062 15.2461 2.85272Z"/><path d="M8.85352 20V13.6364H8.45862C7.55751 13.6364 6.65406 13.3991 5.99609 12.9177C4.70312 11.9608 4.70312 10.4072 4.70312 9.34265C4.70312 7.38819 6.28906 5.22133 8.26172 2.87222C8.59082 3.91217 9.55751 4.62168 10.6241 4.62168H11.2622V0H8.85352V5.3485H5.24609V8.82397H8.85352V20Z"/><path d="M0 20H2.60742V5.3485H0V20Z"/></svg>
+      <span class="font-bold text-xl ml-1">TubeView</span>
+    </a>
+    <div class="search-bar">
+      <input type="text" placeholder="検索">
+      <button class="search-btn" aria-label="検索">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="icon-btn" aria-label="アップロード"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M14 13v4h-4v-4H7l5-5 5 5h-3zm-1 2.408A2.607 2.607 0 0 1 12.408 16 2.607 2.607 0 0 1 10 13.408V13h4v.408zM12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg></button>
+      <button class="icon-btn" aria-label="通知"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></button>
+      <button class="icon-btn" aria-label="アカウント"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);"></div></button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#" class="sidebar-item active">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>ホーム</span>
+    </a>
+    <a href="#" class="sidebar-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+      <span>ショート</span>
+    </a>
+    <a href="#" class="sidebar-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18v-6l5 3-5 3zm7-15H7v1h10V3zm0 19H7v1h10v-1zm0-18H7v1h10V4zM7 6v12h10V6H7z"/></svg>
+      <span>登録チャンネル</span>
+    </a>
+    <a href="#" class="sidebar-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      <span>ライブラリ</span>
+    </a>
+    <a href="#" class="sidebar-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <span>履歴</span>
+    </a>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="video-grid" id="videoGrid"></div>
+  </main>
+
+  <script>
+    const videos = [
+      { title: "【完全解説】プログラミング入門 - ゼロから始めるWeb開発", channel: "Tech Academy", views: "128万回", time: "2日前", thumb: "https://picsum.photos/seed/v1/640/360", avatar: "https://picsum.photos/seed/c1/72/72", duration: "24:15" },
+      { title: "朝のルーティンで人生が変わった話｜5時起きの習慣", channel: "ライフハック太郎", views: "45.2万回", time: "1週間前", thumb: "https://picsum.photos/seed/v2/640/360", avatar: "https://picsum.photos/seed/c2/72/72", duration: "12:08" },
+      { title: "最新iPhone 16 Pro 完全レビュー｜買うべきか徹底検証", channel: "ガジェットレビュー", views: "89万回", time: "3日前", thumb: "https://picsum.photos/seed/v3/640/360", avatar: "https://picsum.photos/seed/c3/72/72", duration: "18:42" },
+      { title: "【感動】野良猫を保護して1年後の変化", channel: "猫の里親", views: "256万回", time: "1ヶ月前", thumb: "https://picsum.photos/seed/v4/640/360", avatar: "https://picsum.photos/seed/c4/72/72", duration: "8:33" },
+      { title: "自炊レシピ10選｜一人暮らしでも作れる簡単料理", channel: "クッキング部", views: "67.8万回", time: "5日前", thumb: "https://picsum.photos/seed/v5/640/360", avatar: "https://picsum.photos/seed/c5/72/72", duration: "15:20" },
+      { title: "【4K】日本絶景ドライブ｜富士山周辺の絶景スポット", channel: "日本ドライブ", views: "34.5万回", time: "2週間前", thumb: "https://picsum.photos/seed/v6/640/360", avatar: "https://picsum.photos/seed/c6/72/72", duration: "32:11" },
+      { title: "ゲーム実況 #100 ついにクリア！感動のエンディング", channel: "ゲーム実況チャンネル", views: "12.3万回", time: "1日前", thumb: "https://picsum.photos/seed/v7/640/360", avatar: "https://picsum.photos/seed/c7/72/72", duration: "45:00" },
+      { title: "【初心者向け】投資の始め方｜NISA・iDeCo完全ガイド", channel: "マネー塾", views: "98万回", time: "1週間前", thumb: "https://picsum.photos/seed/v8/640/360", avatar: "https://picsum.photos/seed/c8/72/72", duration: "28:45" },
+      { title: "筋トレメニュー｜自宅でできる効果的なトレーニング", channel: "フィットネス道場", views: "56.2万回", time: "4日前", thumb: "https://picsum.photos/seed/v9/640/360", avatar: "https://picsum.photos/seed/c9/72/72", duration: "22:30" },
+      { title: "【ASMR】雨の音でリラックス｜1時間", channel: "癒しの音", views: "234万回", time: "2ヶ月前", thumb: "https://picsum.photos/seed/v10/640/360", avatar: "https://picsum.photos/seed/c10/72/72", duration: "1:00:00" },
+      { title: "Vlog｜東京の一日｜渋谷・原宿・新宿", channel: "東京ウォーカー", views: "23.4万回", time: "6日前", thumb: "https://picsum.photos/seed/v11/640/360", avatar: "https://picsum.photos/seed/c11/72/72", duration: "19:22" },
+      { title: "【解説】ChatGPTの使い方｜仕事効率化のコツ", channel: "AI活用術", views: "156万回", time: "3週間前", thumb: "https://picsum.photos/seed/v12/640/360", avatar: "https://picsum.photos/seed/c12/72/72", duration: "16:55" },
+      { title: "カフェ巡り｜隠れ家的コーヒーショップ5選", channel: "カフェハンター", views: "18.9万回", time: "1週間前", thumb: "https://picsum.photos/seed/v13/640/360", avatar: "https://picsum.photos/seed/c13/72/72", duration: "11:40" },
+      { title: "【弾き語り】人気曲カバー集｜アコギで弾いてみた", channel: "音楽部", views: "42.1万回", time: "2日前", thumb: "https://picsum.photos/seed/v14/640/360", avatar: "https://picsum.photos/seed/c14/72/72", duration: "14:28" },
+      { title: "読書レビュー｜今月読んだおすすめ本5冊", channel: "読書のススメ", views: "31.7万回", time: "5日前", thumb: "https://picsum.photos/seed/v15/640/360", avatar: "https://picsum.photos/seed/c15/72/72", duration: "20:15" },
+      { title: "【DIY】100均で作るおしゃれな収納", channel: "暮らしの工夫", views: "78.3万回", time: "1ヶ月前", thumb: "https://picsum.photos/seed/v16/640/360", avatar: "https://picsum.photos/seed/c16/72/72", duration: "13:02" },
+      { title: "英語学習法｜1年でTOEIC900点取った方法", channel: "英語マスター", views: "112万回", time: "2週間前", thumb: "https://picsum.photos/seed/v17/640/360", avatar: "https://picsum.photos/seed/c17/72/72", duration: "25:33" },
+      { title: "【開封】話題の新商品を買ってみた", channel: "開封チャンネル", views: "29.6万回", time: "3日前", thumb: "https://picsum.photos/seed/v18/640/360", avatar: "https://picsum.photos/seed/c18/72/72", duration: "9:47" },
+      { title: "旅行Vlog｜沖縄3日間の旅", channel: "旅するユーチューバー", views: "54.8万回", time: "1週間前", thumb: "https://picsum.photos/seed/v19/640/360", avatar: "https://picsum.photos/seed/c19/72/72", duration: "38:20" },
+      { title: "【料理】プロの技で作る本格ラーメン", channel: "ラーメン道", views: "87.4万回", time: "4日前", thumb: "https://picsum.photos/seed/v20/640/360", avatar: "https://picsum.photos/seed/c20/72/72", duration: "17:11" },
+    ];
+
+    const grid = document.getElementById('videoGrid');
+    videos.forEach(v => {
+      const card = document.createElement('article');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <div class="thumbnail-wrapper">
+          <img src="${v.thumb}" alt="${v.title}" loading="lazy">
+          <span class="duration-badge">${v.duration}</span>
+        </div>
+        <div class="video-info">
+          <img class="channel-avatar" src="${v.avatar}" alt="${v.channel}">
+          <div class="video-details">
+            <h3 class="video-title">${v.title}</h3>
+            <p class="video-meta">${v.channel}</p>
+            <p class="video-meta">${v.views} 視聴 · ${v.time}</p>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+  <title>YouTube風 - 動画ストリーミング</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FF0000' width='100' height='100' rx='20'/><polygon fill='white' points='40,25 40,75 75,50'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- ヘッダー -->
@@ -24,6 +317,19 @@
     </a>
     <div class="search-container">
       <input type="search" class="search-input" placeholder="検索" aria-label="検索">
+    <a href="#" class="logo">
+      <span class="logo-icon-wrap">
+        <svg class="logo-icon" viewBox="0 0 90 20">
+          <path fill="#FF0000" d="M27.9727 3.12324C27.6435 2.0833 26.6768 1.5 25.6092 1.5L16.8608 1.50326L7.64573 17.2694L13.7439 17.2676L22.4044 5.73543L26.9905 17.2676L33.0761 17.2694L27.9727 3.12324Z"/>
+          <path fill="#282828" d="M19.063 8.27136L22.549 14.7557L14.3142 14.7575L19.063 8.27136Z"/>
+          <path fill="#FF0000" d="M44.0987 14.7154H49.2752V11.2871C49.2752 9.35944 50.3333 8.04258 52.1152 8.04258C53.8972 8.04258 54.9563 9.35944 54.9563 11.2871V14.7154H60.1328V10.6879C60.1328 6.34688 57.7365 4.21564 54.3137 4.21564C51.5645 4.21564 49.2752 5.91153 49.2752 5.91153V4.24219H44.0987V14.7154Z"/>
+          <path fill="#FF0000" d="M69.5977 14.7154H74.7742V4.24219H69.5977V14.7154ZM72.1859 1.31812C73.7449 1.31812 75 2.57322 75 4.13226C75 5.69131 73.7449 6.94641 72.1859 6.94641C70.6268 6.94641 69.3717 5.69131 69.3717 4.13226C69.3717 2.57322 70.6268 1.31812 72.1859 1.31812Z"/>
+          <path fill="#FF0000" d="M78.2376 14.7154H83.4141V9.53491C83.4141 8.27136 84.3012 7.38428 85.5648 7.38428C86.8283 7.38428 87.7154 8.27136 87.7154 9.53491V14.7154H92.8919V8.27136C92.8919 5.49495 90.6685 4.21564 88.178 4.21564C86.0887 4.21564 84.3012 5.31641 83.4141 6.93057V4.24219H78.2376V14.7154Z"/>
+        </svg>
+      </span>
+    </a>
+    <div class="search-bar">
+      <input type="search" placeholder="検索" aria-label="検索">
       <button class="search-btn" aria-label="検索">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
       </button>
@@ -31,12 +337,14 @@
     <div class="header-actions">
       <button class="icon-btn" aria-label="アップロード">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
       </button>
       <button class="icon-btn" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
       </button>
       <button class="avatar-btn" aria-label="アカウント">
         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="アバター" width="32" height="32">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1" alt="アバター">
       </button>
     </div>
   </header>
@@ -98,6 +406,49 @@
       </section>
     </main>
   </div>
+  <!-- サイドバー -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>ホーム</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-5.08l-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.5.07 1.46.93 2.75 2.22 3.43l4.94 2.58c1.5.78 3.31.78 4.81 0l5.18-2.7c1.56-.81 2.53-2.49 2.53-4.31 0-1.81-.97-3.5-2.53-4.31zm-.23 5.25l-5.18 2.7c-1.5.78-3.31.78-4.81 0L4.8 11.45c-.69-.36-1.16-1-1.22-1.73-.06-.73.27-1.44.83-1.96l1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44 1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44 1.2-.5c.34.68.94 1.16 1.63 1.25.69.08 1.39-.15 1.92-.66l2.44-2.44z"/></svg>
+        <span>ショート</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L4 14h3.5l-1.25 4h1.11l1.12-3.43h4.28L13 18h1.1l1.25-4h3.5l-2.5-3zm-3.98 2.18L14.5 11h-2.96l1.26 2.18zM3 20h18v-2H3v2z"/></svg>
+        <span>登録チャンネル</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+        <span>ライブラリ</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span>履歴</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>
+        <span>マイ動画</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span>後で見る</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+    <div class="video-grid" id="videoGrid">
+      <!-- 動画カードはJavaScriptで生成 -->
+    </div>
+  </main>
 
   <script src="app.js"></script>
 </body>

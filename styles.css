@@ -1,6 +1,10 @@
 /* YouTube風 スタイル - VideoHub */
 
 :root {
+/* YouTube風 スタイル */
+:root {
+  --yt-red: #ff0000;
+  --yt-red-hover: #cc0000;
   --bg-primary: #0f0f0f;
   --bg-secondary: #212121;
   --bg-tertiary: #3f3f3f;
@@ -10,6 +14,8 @@
   --accent-hover: #cc0000;
   --border-color: #303030;
   --sidebar-width: 240px;
+  --border-color: #303030;
+  --sidebar-width: 72px;
   --header-height: 56px;
 }
 
@@ -25,6 +31,10 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
 }
 
 /* ヘッダー */
@@ -35,6 +45,7 @@ body {
   right: 0;
   height: var(--header-height);
   background-color: var(--bg-primary);
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -86,6 +97,23 @@ body {
 
 /* 検索バー */
 .search-container {
+  text-decoration: none;
+  color: var(--text-primary);
+  margin-right: 8px;
+}
+
+.logo-icon-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.logo-icon {
+  width: 90px;
+  height: 20px;
+}
+
+/* 検索バー */
+.search-bar {
   flex: 1;
   max-width: 640px;
   display: flex;
@@ -130,6 +158,41 @@ body {
 
 .search-btn:hover {
   background: var(--bg-tertiary);
+.search-bar input {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  border-radius: 40px 0 0 40px;
+  padding: 10px 16px;
+  font-size: 16px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-bar input:focus {
+  border-color: #065fd4;
+}
+
+.search-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-radius: 0 40px 40px 0;
+  padding: 8px 20px;
+  cursor: pointer;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background: #4f4f4f;
 }
 
 .search-btn svg {
@@ -185,6 +248,10 @@ body {
   display: flex;
   padding-top: var(--header-height);
   min-height: 100vh;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 /* サイドバー */
@@ -198,12 +265,22 @@ body {
   bottom: 0;
   overflow-y: auto;
   padding: 12px 0;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--header-height));
+  background: var(--bg-primary);
+  padding: 12px 0;
+  z-index: 90;
+  overflow-y: auto;
   border-right: 1px solid var(--border-color);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .nav-item {
@@ -216,6 +293,16 @@ body {
   font-size: 14px;
   transition: background 0.2s;
   border-radius: 0 24px 24px 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 10px;
+  gap: 4px;
+  border-radius: 0 24px 24px 0;
+  transition: background 0.2s;
 }
 
 .nav-item:hover {
@@ -236,6 +323,8 @@ body {
 .sidebar-divider {
   border: none;
   border-top: 1px solid var(--border-color);
+  height: 1px;
+  background: var(--border-color);
   margin: 12px 0;
 }
 
@@ -244,6 +333,9 @@ body {
   flex: 1;
   margin-left: var(--sidebar-width);
   padding: 24px;
+  margin-left: var(--sidebar-width);
+  margin-top: var(--header-height);
+  padding: 24px 24px 40px;
   min-height: calc(100vh - var(--header-height));
 }
 
@@ -252,6 +344,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px 16px;
+  max-width: 100%;
 }
 
 /* 動画カード */
@@ -272,6 +365,9 @@ body {
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-secondary);
 }
 
 .video-thumbnail img {
@@ -299,6 +395,11 @@ body {
 }
 
 .video-channel-avatar {
+  margin-top: 12px;
+  padding: 0 4px;
+}
+
+.video-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -324,6 +425,10 @@ body {
 }
 
 .video-channel-name {
+  margin-bottom: 4px;
+}
+
+.video-channel {
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 2px;
@@ -338,6 +443,15 @@ body {
 @media (max-width: 1280px) {
   .video-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+@media (min-width: 1280px) {
+  .video-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1920px) {
+  .video-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
@@ -346,6 +460,16 @@ body {
     display: none;
   }
 
+  .search-bar {
+    display: none;
+  }
+  
+  .sidebar {
+    width: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  
   .main-content {
     margin-left: 0;
     padding: 16px;
@@ -369,4 +493,28 @@ body {
   .video-grid {
     grid-template-columns: 1fr;
   }
+  
+  .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* スクロールバー */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5f5f5f;
 }
